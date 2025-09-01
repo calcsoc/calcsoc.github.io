@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculus Society</title>
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+
+  <style>
+    /* ===== Theme Variables ===== */
+    :root {
+      --bg: #f8f9fa;
+      --card-bg: white;
+      --text: #333;
+      --text-light: #555;
+      --accent: #3498db;
+      --accent-hover: #2980b9;
+      --border: #ecf0f1;
+      --footer: #95a5a6;
+      --streak: #e67e22;
+      --correct-bg: #d4edda;
+      --correct-text: #155724;
+      --incorrect-bg: #f8d7da;
+      --incorrect-text: #721c24;
+      --shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #e0e0e0;
+      --text-light: #aaa;
+      --accent: #5dade2;
+      --accent-hover: #3498db;
+      --border: #333;
+      --footer: #777;
+      --streak: #f39c12;
+      --correct-bg: #1a4b3a;
+      --correct-text: #58d68d;
+      --incorrect-bg: #5e2c2c;
+      --incorrect-text: #e74c3c;
+      --shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ===== Base Styles ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      transition: background-color 0.3s ease;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .theme-toggle {
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-hover);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: background-color 0.3s ease;
+    }
+
+    h2 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-light);
+    }
+
+    .math-block {
+      overflow-x: auto;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.3rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1rem;
+      font-family: 'Courier New', monospace;
+      transition: border 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .streak {
+      font-size: 1.2rem;
+      color: var(--streak);
+      font-weight: bold;
+    }
+
+    .feedback {
+      margin-top: 1rem;
+      padding: 0.7rem;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .correct {
+      background-color: var(--correct-bg);
+      color: var(--correct-text);
+      border: 1px solid var(--correct-text);
+    }
+
+    .incorrect {
+      background-color: var(--incorrect-bg);
+      color: var(--incorrect-text);
+      border: 1px solid var(--incorrect-text);
+    }
+
+    .notes-list {
+      list-style: none;
+    }
+
+    .notes-list li {
+      margin-bottom: 0.8rem;
+    }
+
+    .notes-list a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .notes-list a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: var(--footer);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Calculus Society</h1>
+      <p class="tagline">Exploring mathematics beyond the syllabus</p>
+      <button class="theme-toggle" id="theme-toggle">Dark Mode</button>
+    </header>
+
+    <!-- Weekly Streak Display -->
+    <div class="card">
+      <h2>Your Streak</h2>
+      <p class="streak" id="streak-count">0 weeks</p>
+      <p>Solve the <strong>Integral of the Week</strong> to keep your streak alive!</p>
+    </div>
+
+    <!-- Integral of the Week -->
+    <div class="card">
+      <h2>Integral of the Week</h2>
+      <p><strong>Evaluate the integral:</strong></p>
+      <div class="math-block" id="integral-math"></div>
+      <label for="user-answer">Your answer:</label>
+      <input type="text" id="user-answer" placeholder="e.g., x^4 - 3x^2 + tan(x) + C" />
+      <button id="submit-btn">Submit Answer</button>
+      <div id="result-message"></div>
+    </div>
+
+    <!-- Lecture Notes -->
+    <div class="card">
+      <h2>Past Slides</h2>
+      <p>Download previous lecture materials:</p>
+      <ul class="notes-list">
+        <li><a href="#note1" download>Lecture 1: Limits & Continuity (PDF)</a></li>
+        <li><a href="#note2" download>Lecture 2: The Mean Value Theorem (PDF)</a></li>
+        <li><a href="#note3" download>Lecture 3: Taylor Series (PDF)</a></li>
+        <li><a href="#note4" download>Lecture 4: Multivariable Calculus Intro (PDF)</a></li>
+        <li><a href="#note5" download>Lecture 5: Differential Equations (PDF)</a></li>
+      </ul>
+    </div>
+
+    <footer>
+      &copy; <span id="year"></span> Calculus Society. All rights reserved.
+    </footer>
+  </div>
+
+  <!-- KaTeX JS -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script>
+    // ===== Theme Logic =====
+    const html = document.documentElement;
+    const toggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('calculusSocietyTheme') || 
+                       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    function setTheme(theme) {
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('calculusSocietyTheme', theme);
+      toggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+    }
+
+    setTheme(savedTheme);
+
+    toggle.addEventListener('click', () => {
+      const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme);
+    });
+
+    // ===== Page Logic =====
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const streakCount = document.getElementById('streak-count');
+    const resultMsg = document.getElementById('result-message');
+    const submitBtn = document.getElementById('submit-btn');
+    const integralMath = document.getElementById('integral-math');
+
+    // Load integral data
+    const integralData = JSON.parse(localStorage.getItem('calculusSocietyIntegral')) || {
+      latex: "\\int x \\, dx",
+      answerPatterns: ["x^2/2 + C", "x2/2 + c"]
+    };
+
+    // Render KaTeX
+    function renderMath() {
+      try {
+        katex.render(`\\displaystyle ${integralData.latex}`, integralMath, {
+          displayMode: true,
+          throwOnError: false,
+          strict: "warn"
+        });
+      } catch (e) {
+        integralMath.textContent = "Rendering error: " + e.message;
+      }
+    }
+    renderMath();
+
+    // Streak logic
+    let currentStreak = parseInt(localStorage.getItem('calculusSocietyWeeklyStreak')) || 0;
+    let lastSolvedWeek = localStorage.getItem('calculusSocietyLastWeek');
+    streakCount.textContent = `${currentStreak} week${currentStreak !== 1 ? 's' : ''}`;
+
+    function getWeekNumber(date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+      const yearStart = new Date(d.getFullYear(), 0, 1);
+      return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+    }
+
+    const currentWeek = `${new Date().getFullYear()}-W${getWeekNumber(new Date())}`;
+
+    if (lastSolvedWeek === currentWeek) {
+      resultMsg.innerHTML = '<div class="feedback correct">✅ You already solved this week’s integral.</div>';
+      submitBtn.disabled = true;
+    }
+
+    function normalize(str) {
+      return str.toLowerCase().replace(/\s+/g, '');
+    }
+
+    function checkAnswer(ans) {
+      const norm = normalize(ans);
+      return integralData.answerPatterns.some(pattern =>
+        norm.includes(normalize(pattern))
+      );
+    }
+
+    submitBtn.addEventListener('click', () => {
+      const userAnswer = document.getElementById('user-answer').value.trim();
+      if (!userAnswer) {
+        resultMsg.innerHTML = '<div class="feedback incorrect">Please enter your answer.</div>';
+        return;
+      }
+
+      if (lastSolvedWeek === currentWeek) return;
+
+      if (checkAnswer(userAnswer)) {
+        const lastWeekNum = lastSolvedWeek ? parseInt(lastSolvedWeek.split('-W')[1]) : 0;
+        const currentWeekNum = parseInt(currentWeek.split('-W')[1]);
+
+        const isConsecutive = lastSolvedWeek && (
+          currentWeekNum === lastWeekNum + 1 ||
+          (lastWeekNum === 52 && currentWeekNum === 1)
+        );
+
+        currentStreak = isConsecutive ? currentStreak + 1 : 1;
+
+        localStorage.setItem('calculusSocietyWeeklyStreak', currentStreak);
+        localStorage.setItem('calculusSocietyLastWeek', currentWeek);
+
+        streakCount.textContent = `${currentStreak} week${currentStreak !== 1 ? 's' : ''}`;
+        resultMsg.innerHTML = `<div class="feedback correct">✅ Correct! Streak: <strong>${currentStreak}</strong>.</div>`;
+        submitBtn.disabled = true;
+      } else {
+        localStorage.setItem('calculusSocietyLastWeek', currentWeek);
+        resultMsg.innerHTML = `<div class="feedback incorrect">❌ Not quite. Keep practicing!</div>`;
+        submitBtn.disabled = true;
+      }
+    });
+  </script>
+</body>
+</html>

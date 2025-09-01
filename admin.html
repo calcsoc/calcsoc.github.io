@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin – Calculus Society</title>
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1f3f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      text-align: center;
+      color: #7f8c8d;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background-color: #219653;
+    }
+
+    .feedback {
+      margin-top: 1rem;
+      padding: 0.7rem;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6c8;
+    }
+
+    .preview {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Admin Panel</h1>
+    <p>Update the Integral of the Week</p>
+
+    <div class="card">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter admin password" />
+
+      <label for="latex">LaTeX Expression (e.g., \int (x^2 + e^x) \, dx)</label>
+      <textarea id="latex" placeholder="\int (3x^2 + \sin x) \, dx"></textarea>
+
+      <label for="answers">Correct Answer Patterns (one per line)</label>
+      <textarea id="answers" placeholder="x^3 - cos(x) + C
+x3 - cosx + c
+x^3 + C - cos x"></textarea>
+
+      <button id="save-btn">Update Integral</button>
+      <div id="result-message"></div>
+
+      <div class="preview">
+        <strong>Preview:</strong>
+        <div id="preview-math" style="font-size: 1.2em; text-align: center; margin: 10px 0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KaTeX JS -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script>
+    const latexInput = document.getElementById('latex');
+    const previewMath = document.getElementById('preview-math');
+    const resultMsg = document.getElementById('result-message');
+
+    // Function to render LaTeX in a DOM element
+    function renderLatex(latex, element) {
+      try {
+        // Wrap in display mode
+        katex.render(`\\displaystyle ${latex}`, element, {
+          displayMode: true,
+          throwOnError: false,
+          strict: "warn"
+        });
+      } catch (e) {
+        element.textContent = "LaTeX Error: " + e.message;
+      }
+    }
+
+    // Live preview
+    latexInput.addEventListener('input', () => {
+      const value = latexInput.value.trim();
+      if (value) {
+        renderLatex(value, previewMath);
+      } else {
+        previewMath.textContent = "(preview will appear here)";
+      }
+    });
+
+    // Initial preview
+    if (latexInput.value.trim()) {
+      renderLatex(latexInput.value.trim(), previewMath);
+    } else {
+      previewMath.textContent = "(preview will appear here)";
+    }
+
+    // Save handler
+    document.getElementById('save-btn').addEventListener('click', () => {
+      const password = document.getElementById('password').value;
+      const latex = document.getElementById('latex').value.trim();
+      const answersText = document.getElementById('answers').value.trim();
+
+      // 🔐 Change this password!
+      const ADMIN_PASSWORD = "calc2025";
+
+      if (password !== ADMIN_PASSWORD) {
+        resultMsg.innerHTML = '<div class="feedback error">❌ Incorrect password.</div>';
+        return;
+      }
+
+      if (!latex) {
+        resultMsg.innerHTML = '<div class="feedback error">❌ Please enter a valid LaTeX expression.</div>';
+        return;
+      }
+
+      const answerPatterns = answersText
+        .split('\n')
+        .map(s => s.trim())
+        .filter(s => s);
+
+      if (answerPatterns.length === 0) {
+        resultMsg.innerHTML = '<div class="feedback error">❌ Please enter at least one correct answer pattern.</div>';
+        return;
+      }
+
+      // Save to localStorage
+      const integralData = { latex, answerPatterns };
+      localStorage.setItem('calculusSocietyIntegral', JSON.stringify(integralData));
+
+      resultMsg.innerHTML = '<div class="feedback success">✅ Integral updated successfully!</div>';
+    });
+  </script>
+</body>
+</html>
